@@ -17,7 +17,10 @@ export default function LoginPage() {
     setError('');
     try {
       const token = await login(user, pass);
-      if (!token) throw new Error('Token no válido');
+
+      if (!token) {
+        throw new Error('Token no válido');
+      }
 
       dispatch(setToken(token));
       localStorage.setItem('token', token);
@@ -30,14 +33,15 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col items-center bg-gray-100 justify-center min-h-screen p-4">
       <h1 className="text-xl font-bold text-gray-700 mb-4">Iniciar sesión</h1>
+
       <input
-        className="mb-3 border-b border-gray-300 focus:border-blue-500 focus:outline-none w-full max-w-sm text-gray-600 bg-transparent p-2 transition-colors"
+        className="mb-3 border-b border-gray-300 focus:border-blue-500 focus:outline-none w-full max-w-sm text-gray-600 bg-transparent p-2"
         placeholder="Usuario"
         value={user}
         onChange={(e) => setUser(e.target.value)}
       />
       <input
-        className="mb-3 border-b border-gray-300 focus:border-blue-500 focus:outline-none w-full max-w-sm text-gray-600 bg-transparent p-2 transition-colors"
+        className="mb-3 border-b border-gray-300 focus:border-blue-500 focus:outline-none w-full max-w-sm text-gray-600 bg-transparent p-2"
         placeholder="Contraseña"
         type="password"
         value={pass}
