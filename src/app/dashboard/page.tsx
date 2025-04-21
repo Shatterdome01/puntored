@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { obtenerReferenciasLocal } from '@/api/references';
 import ReferenceCard from '@/components/ReferenceCard';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -13,6 +14,7 @@ import GraficaReferencias from '@/components/GraficaReference';
 const REFERENCIAS_POR_PAGINA = 6;
 
 export default function DashboardPage() {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const referencias = useAppSelector((state) => state.references.lista);
   const [loading, setLoading] = useState(true);
@@ -30,8 +32,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      setError('Token no encontrado en localStorage');
-      setLoading(false);
+      router.push('/login');
       return;
     }
 
@@ -48,19 +49,17 @@ export default function DashboardPage() {
         setError(err.message || 'Error al cargar referencias');
       })
       .finally(() => setLoading(false));
-  }, [dispatch]);
+  }, [dispatch, router]);
 
   const filtradas = referencias.filter((r: any) => {
-    const fechaCreacion = r.creationDate ? r.creationDate.slice(0, 10) : '';
+    const fechaCreacion = r.creationDate?.slice(0, 10) || '';
     if (filtro.fechaInicio && fechaCreacion < filtro.fechaInicio) return false;
     if (filtro.fechaFin && fechaCreacion > filtro.fechaFin) return false;
     if (filtro.estado && r.status !== filtro.estado) return false;
     if (filtro.montoMin && Number(r.amount) < Number(filtro.montoMin)) return false;
     if (filtro.montoMax && Number(r.amount) > Number(filtro.montoMax)) return false;
-
     const texto = (r.reference + ' ' + (r.description ?? '')).toLowerCase();
     if (filtro.busqueda && !texto.includes(filtro.busqueda.toLowerCase())) return false;
-
     return true;
   });
 
