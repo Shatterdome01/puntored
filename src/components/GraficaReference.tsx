@@ -15,29 +15,25 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function GraficaReferencias({ data }: { data: any[] }) {
-  const contadores: { [key in '01' | '02' | '03' | '04']: number } = {
-    '01': 0, 
-    '02': 0,
-    '03': 0, 
-    '04': 0, 
+  const estados = ['01', '02', '03', '04'] as const;
+  const nombres = {
+    '01': 'Creadas',
+    '02': 'Pagadas',
+    '03': 'Canceladas',
+    '04': 'Expiradas',
   };
 
-  data.forEach((r) => {
-    const key = r.status as keyof typeof contadores;
-    if (contadores[key] !== undefined) contadores[key]++;
-  });
+  const contadores = estados.reduce((acc, estado) => {
+    acc[estado] = data.filter((r) => r.status === estado).length;
+    return acc;
+  }, {} as Record<typeof estados[number], number>);
 
   const chartData = {
-    labels: ['Creadas', 'Pagadas', 'Canceladas', 'Expiradas'],
+    labels: estados.map((e) => nombres[e]),
     datasets: [
       {
         label: 'Referencias',
-        data: [
-          contadores['01'],
-          contadores['02'],
-          contadores['03'],
-          contadores['04'],
-        ],
+        data: estados.map((e) => contadores[e]),
         backgroundColor: ['#3b82f6', '#22c55e', '#ef4444', '#facc15'],
       },
     ],

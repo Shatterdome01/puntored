@@ -64,7 +64,6 @@ export default function DashboardPage() {
     return true;
   });
 
-  // Paginación
   const totalPaginas = Math.ceil(filtradas.length / REFERENCIAS_POR_PAGINA);
   const inicio = (pagina - 1) * REFERENCIAS_POR_PAGINA;
   const actuales = filtradas.slice(inicio, inicio + REFERENCIAS_POR_PAGINA);
@@ -73,7 +72,6 @@ export default function DashboardPage() {
     setPagina(1);
   }, [filtro]);
 
-  // Exportación a CSV
   const exportarCSV = () => {
     const csv = Papa.unparse(filtradas.map(r => ({
       Referencia: r.reference,
@@ -86,7 +84,6 @@ export default function DashboardPage() {
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', 'referencias.csv');
@@ -108,7 +105,6 @@ export default function DashboardPage() {
         >
           Exportar CSV
         </button>
-        
       </div>
 
       <FiltrosReferences filtro={filtro} onFiltroChange={setFiltro} />
